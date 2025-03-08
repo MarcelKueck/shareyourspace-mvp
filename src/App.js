@@ -9,26 +9,31 @@ import MatchPage from './pages/MatchPage';
 import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
 import { ThemeProvider } from './context/ThemeContext';
+import { AssistantProvider } from './context/AssistantContext';
+import Assistant from './components/Assistant';
 
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <div className="flex flex-col min-h-screen bg-white dark:bg-dark-bg transition-colors duration-200">
-          <Navbar />
-          <main className="flex-grow bg-white dark:bg-dark-bg transition-colors duration-200">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/explore" element={<ExplorePage />} />
-              <Route path="/space/:id" element={<SpaceDetailPage />} />
-              <Route path="/match" element={<MatchPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+      <AssistantProvider>
+        <Router>
+          <div className="flex flex-col min-h-screen bg-white dark:bg-dark-bg transition-colors duration-200">
+            <Navbar />
+            <main className="flex-grow bg-white dark:bg-dark-bg transition-colors duration-200">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/explore" element={<ExplorePage />} />
+                <Route path="/space/:id" element={<SpaceDetailPage />} />
+                <Route path="/match" element={<MatchPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+              </Routes>
+            </main>
+            <Footer />
+            <Assistant />
+          </div>
+        </Router>
+      </AssistantProvider>
     </ThemeProvider>
   );
 }
