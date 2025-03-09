@@ -9,14 +9,14 @@ import MatchPage from './pages/MatchPage';
 import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
 import { ThemeProvider } from './context/ThemeContext';
-import { AssistantProvider } from './context/AssistantContext';
-import Assistant from './components/Assistant';
+import { CopilotProvider } from './context/CopilotContext';
+import Copilot from './components/Copilot';
 
 function App() {
   return (
     <ThemeProvider>
-      <AssistantProvider>
-        <Router>
+      <Router>
+        <CopilotProvider>
           <div className="flex flex-col min-h-screen bg-white dark:bg-dark-bg transition-colors duration-200">
             <Navbar />
             <main className="flex-grow bg-white dark:bg-dark-bg transition-colors duration-200">
@@ -30,10 +30,10 @@ function App() {
               </Routes>
             </main>
             <Footer />
-            <Assistant />
+            <Copilot />
           </div>
-        </Router>
-      </AssistantProvider>
+        </CopilotProvider>
+      </Router>
     </ThemeProvider>
   );
 }
