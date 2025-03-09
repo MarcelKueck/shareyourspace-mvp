@@ -114,20 +114,18 @@ const AnalyticsDashboardPage = () => {
     }
   };
 
+  // Simulate API data loading
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setAnalyticsData(mockAnalyticsData);
+      setIsLoading(false);
+    };
 
-
-  // // Simulate API data loading
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsLoading(true);
-  //     // Simulate API delay
-  //     await new Promise(resolve => setTimeout(resolve, 800));
-  //     setAnalyticsData(mockAnalyticsData);
-  //     setIsLoading(false);
-  //   };
-
-  //   fetchData();
-  // }, [timeRange, focusSpace]);
+    fetchData();
+  }, [timeRange, focusSpace]);
 
   // Handle time range change
   const handleTimeRangeChange = (range) => {

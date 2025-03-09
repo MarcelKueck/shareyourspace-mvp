@@ -35,7 +35,7 @@ export const spaces = [
     description: "Collaborative workspace hosted by Siemens, equipped with cutting-edge technology and designed for innovation teams working on digital transformation projects.",
     location: "Maxvorstadt, Munich",
     imageUrl: "https://images.unsplash.com/photo-1572025442646-866d16c84a54?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    featured: false,
+    featured: true,
     amenities: ["Smart office tech", "Prototyping tools", "Conference rooms", "Lounge area", "Parking"],
     price: 45,
     priceUnit: "per day / workstation",
