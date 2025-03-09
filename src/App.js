@@ -10,6 +10,9 @@ import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
 import ComplianceDashboardPage from './pages/ComplianceDashboardPage';
 import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
+import EnterprisePilotPage from './pages/EnterprisePilotPage';
+import PilotDashboardPage from './pages/PilotDashboardPage';
+import PilotTermsPage from './pages/PilotTermsPage';
 import { ThemeProvider } from './context/ThemeContext';
 import { CopilotProvider } from './context/CopilotContext';
 import Copilot from './components/Copilot';
@@ -31,6 +34,9 @@ function App() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/compliance-dashboard" element={<ComplianceDashboardPage />} />
                 <Route path="/analytics" element={<AnalyticsDashboardPage />} />
+                <Route path="/enterprise-pilot" element={<EnterprisePilotPage />} />
+                <Route path="/enterprise-pilot/dashboard" element={<PilotDashboardPage />} />
+                <Route path="/enterprise-pilot/terms" element={<PilotTermsPage />} />
               </Routes>
             </main>
             <Footer />
