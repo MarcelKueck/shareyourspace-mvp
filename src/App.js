@@ -9,6 +9,7 @@ import MatchPage from './pages/MatchPage';
 import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
 import ComplianceDashboardPage from './pages/ComplianceDashboardPage';
+import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
 import { ThemeProvider } from './context/ThemeContext';
 import { CopilotProvider } from './context/CopilotContext';
 import Copilot from './components/Copilot';

@@ -9,6 +9,7 @@ const navigation = [
   { name: 'Explore Spaces', href: '/explore' },
   { name: 'InnovationMatch', href: '/match' },
   { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Analytics', href: '/analytics' },
 ]
 
 export default function Navbar() {
