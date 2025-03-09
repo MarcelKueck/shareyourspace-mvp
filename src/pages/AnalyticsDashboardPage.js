@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { styles } from '../styles/darkMode';
+import { spaces } from '../data/spaces';
 import OccupancyChart from '../components/analytics/OccupancyChart';
 import RevenueMetrics from '../components/analytics/RevenueMetrics';
 import BookingTrends from '../components/analytics/BookingTrends';
@@ -73,6 +74,8 @@ const mockAnalyticsData = {
 };
 
 const AnalyticsDashboardPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState('month');
   const [comparisonEnabled, setComparisonEnabled] = useState(false);
   const [focusSpace, setFocusSpace] = useState('all');
@@ -80,28 +83,61 @@ const AnalyticsDashboardPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [analyticsData, setAnalyticsData] = useState(null);
 
-  // Simulate API data loading
+  // Parse query parameters to get spaceId
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setAnalyticsData(mockAnalyticsData);
-      setIsLoading(false);
-    };
+    const searchParams = new URLSearchParams(location.search);
+    const spaceIdParam = searchParams.get('spaceId');
+    
+    if (spaceIdParam) {
+      // Convert spaceId string back to proper format if needed
+      const formattedSpaceId = spaceIdParam.replace(/_/g, ' ');
+      
+      // Find the space ID in your dropdown options that matches this name
+      const space = spaces.find(s => s.name === formattedSpaceId);
+      if (space) {
+        setFocusSpace(space.id.toString());
+      }
+    }
+  }, [location]);
 
-    fetchData();
-  }, [timeRange, focusSpace]);
+  // Update the handleSpaceFocusChange function to navigate with the new parameter
+  const handleSpaceFocusChange = (e) => {
+    const newSpaceId = e.target.value;
+    setFocusSpace(newSpaceId);
+    
+    // Optional: Update URL to reflect the selected space
+    if (newSpaceId !== 'all') {
+      const spaceName = spaces.find(s => s.id.toString() === newSpaceId)?.name.replace(/\s+/g, '_');
+      navigate(`/analytics?spaceId=${spaceName || newSpaceId}`);
+    } else {
+      navigate('/analytics');
+    }
+  };
+
+
+
+  // // Simulate API data loading
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+  //     // Simulate API delay
+  //     await new Promise(resolve => setTimeout(resolve, 800));
+  //     setAnalyticsData(mockAnalyticsData);
+  //     setIsLoading(false);
+  //   };
+
+  //   fetchData();
+  // }, [timeRange, focusSpace]);
 
   // Handle time range change
   const handleTimeRangeChange = (range) => {
     setTimeRange(range);
   };
 
-  // Handle space focus change
-  const handleSpaceFocusChange = (e) => {
-    setFocusSpace(e.target.value);
-  };
+  // // Handle space focus change
+  // const handleSpaceFocusChange = (e) => {
+  //   setFocusSpace(e.target.value);
+  // };
 
   return (
     <div className="bg-gray-50 dark:bg-dark-bg-light min-h-screen transition-colors duration-200">

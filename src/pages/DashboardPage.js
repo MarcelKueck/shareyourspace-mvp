@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { styles } from '../styles/darkMode';
+import { Link } from 'react-router-dom';
 
 const DashboardPage = () => {
   const [activeTab, setActiveTab] = useState('bookings');
@@ -144,9 +145,17 @@ const DashboardPage = () => {
                               </p>
                             </div>
                             <div className="ml-2 flex-shrink-0 flex">
-                              <button className="px-3 py-1 text-xs text-primary-600 dark:text-dark-primary-500 border border-primary-500 dark:border-dark-primary-500 rounded-md hover:bg-primary-50 dark:hover:bg-dark-bg transition-colors duration-200">
-                                View Details
-                              </button>
+                              <div className="flex space-x-2">
+                                <button className="px-3 py-1 text-xs text-primary-600 dark:text-dark-primary-500 border border-primary-500 dark:border-dark-primary-500 rounded-md hover:bg-primary-50 dark:hover:bg-dark-bg transition-colors duration-200">
+                                  View Details
+                                </button>
+                                <Link 
+                                  to={`/analytics?spaceId=${booking.spaceName.replace(/\s+/g, '_')}`}
+                                  className="px-3 py-1 text-xs text-blue-600 dark:text-blue-400 border border-blue-500 dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-dark-bg-light transition-colors duration-200"
+                                >
+                                  Analytics
+                                </Link>
+                              </div>
                             </div>
                           </div>
                           <div className="mt-2 sm:flex sm:justify-between">
