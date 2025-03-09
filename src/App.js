@@ -30,6 +30,7 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/compliance-dashboard" element={<ComplianceDashboardPage />} />
+                <Route path="/analytics" element={<AnalyticsDashboardPage />} />
               </Routes>
             </main>
             <Footer />
