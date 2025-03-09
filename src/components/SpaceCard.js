@@ -1,8 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { calculateComplianceScore } from '../services/complianceService';
 import { styles } from '../styles/darkMode';
 
-const SpaceCard = ({ space }) => {
+const SpaceCard = ({ space, showComplianceScore = false }) => {
+  // Calculate compliance score if not provided
+  const complianceScore = space.complianceScore !== undefined 
+    ? space.complianceScore 
+    : calculateComplianceScore(space);
+  
+  // Determine security level text
+  const getSecurityLevel = (score) => {
+    if (score >= 90) return 'Enterprise+';
+    if (score >= 80) return 'Enterprise';
+    if (score >= 60) return 'Business';
+    if (score >= 40) return 'Basic';
+    return 'Minimal';
+  };
+  
+  // Get color for compliance badge
+  const getComplianceColor = (score) => {
+    if (score >= 80) return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
+    if (score >= 60) return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200';
+    if (score >= 40) return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200';
+    return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200';
+  };
+  
   return (
     <div className="bg-white dark:bg-dark-bg-light rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative pb-48 overflow-hidden">
@@ -14,6 +37,15 @@ const SpaceCard = ({ space }) => {
         {space.featured && (
           <div className="absolute top-0 right-0 bg-primary-500 dark:bg-dark-primary-500 text-white text-xs font-bold px-3 py-1 m-1 rounded-full transition-colors duration-200">
             Featured
+          </div>
+        )}
+        
+        {/* Add compliance badge */}
+        {showComplianceScore && (
+          <div className="absolute top-0 left-0 m-1">
+            <div className={`px-2 py-1 text-xs font-medium rounded-full ${getComplianceColor(complianceScore)}`}>
+              {getSecurityLevel(complianceScore)} Security
+            </div>
           </div>
         )}
       </div>
@@ -29,11 +61,35 @@ const SpaceCard = ({ space }) => {
         <p className="text-sm text-gray-500 dark:text-dark-text-secondary mb-4 line-clamp-2 transition-colors duration-200">{space.description}</p>
         
         <div className="flex flex-wrap gap-2 mb-4">
-          {space.amenities.map((amenity, index) => (
+          {/* Show compliance badges first */}
+          {space.compliance && showComplianceScore && (
+            Object.entries(space.compliance)
+              .filter(([key, value]) => value)
+              .slice(0, 3)
+              .map(([key]) => (
+                <span key={key} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 transition-colors duration-200">
+                  {key === 'dataProtection' ? 'GDPR' :
+                   key === 'iso27001' ? 'ISO 27001' :
+                   key === 'nda' ? 'NDA Support' :
+                   key === 'ipProtection' ? 'IP Protection' :
+                   key}
+                </span>
+              ))
+          )}
+          
+          {/* Show amenities */}
+          {space.amenities.slice(0, showComplianceScore ? 1 : 3).map((amenity, index) => (
             <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary-100 dark:bg-dark-bg text-secondary-800 dark:text-dark-text-primary transition-colors duration-200">
               {amenity}
             </span>
           ))}
+          
+          {/* Show "more" indicator if needed */}
+          {space.amenities.length > (showComplianceScore ? 1 : 3) && (
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-dark-bg text-gray-600 dark:text-dark-text-secondary transition-colors duration-200">
+              +{space.amenities.length - (showComplianceScore ? 1 : 3)} more
+            </span>
+          )}
         </div>
         
         <div className="flex items-end justify-between">

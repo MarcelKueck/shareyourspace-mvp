@@ -8,6 +8,7 @@ import SpaceDetailPage from './pages/SpaceDetailPage';
 import MatchPage from './pages/MatchPage';
 import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
+import ComplianceDashboardPage from './pages/ComplianceDashboardPage';
 import { ThemeProvider } from './context/ThemeContext';
 import { CopilotProvider } from './context/CopilotContext';
 import Copilot from './components/Copilot';
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/match" element={<MatchPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/compliance-dashboard" element={<ComplianceDashboardPage />} />
               </Routes>
             </main>
             <Footer />

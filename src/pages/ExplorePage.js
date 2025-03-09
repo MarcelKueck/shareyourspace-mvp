@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { spaces } from '../data/spaces';
 import SpaceCard from '../components/SpaceCard';
+import ComplianceFilter from '../components/compliance/ComplianceFilter';
+import { filterSpacesByCompliance, calculateComplianceScore } from '../services/complianceService';
 import { styles } from '../styles/darkMode';
 
 const ExplorePage = () => {
@@ -8,15 +10,15 @@ const ExplorePage = () => {
     location: '',
     amenities: [],
     priceRange: [0, 100],
-    complianceFeatures: []
+    complianceFilters: {}
   });
   
+  const [expandedComplianceFilters, setExpandedComplianceFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
   // Available filter options
   const locations = [...new Set(spaces.map(space => space.location))];
   const amenitiesList = [...new Set(spaces.flatMap(space => space.amenities))];
-  const complianceFeatures = ['dataProtection', 'nda', 'ipProtection', 'iso27001'];
   
   // Apply filters and search
   const filteredSpaces = spaces.filter(space => {
@@ -42,14 +44,22 @@ const ExplorePage = () => {
       return false;
     }
     
-    // Compliance features filter
-    if (filters.complianceFeatures.length > 0 && !filters.complianceFeatures.every(feature => 
-      space.compliance && space.compliance[feature])) {
-      return false;
-    }
-    
     return true;
   });
+  
+  // Further filter by compliance requirements
+  const complianceFilteredSpaces = Object.keys(filters.complianceFilters).length > 0
+    ? filterSpacesByCompliance(filteredSpaces, filters.complianceFilters)
+    : filteredSpaces;
+    
+  // Add compliance scores to spaces for display
+  const spacesWithScores = complianceFilteredSpaces.map(space => ({
+    ...space,
+    complianceScore: calculateComplianceScore(space)
+  }));
+  
+  // Sort spaces prioritizing security level
+  const sortedSpaces = [...spacesWithScores].sort((a, b) => b.complianceScore - a.complianceScore);
   
   // Handle filter changes
   const handleLocationChange = (e) => {
@@ -68,21 +78,49 @@ const ExplorePage = () => {
     });
   };
   
-  const handleComplianceChange = (feature) => {
-    setFilters({
-      ...filters,
-      complianceFeatures: filters.complianceFeatures.includes(feature)
-        ? filters.complianceFeatures.filter(f => f !== feature)
-        : [...filters.complianceFeatures, feature]
-    });
-  };
-  
   const handlePriceRangeChange = (index, value) => {
     const newRange = [...filters.priceRange];
     newRange[index] = Number(value);
     setFilters({
       ...filters,
       priceRange: newRange
+    });
+  };
+  
+  // Handle compliance filter changes
+  const handleComplianceStandardChange = (standardId, isSelected) => {
+    if (standardId === '__expanded') {
+      setExpandedComplianceFilters(isSelected);
+      return;
+    }
+    
+    const updatedFilters = { ...filters.complianceFilters };
+    
+    if (isSelected) {
+      updatedFilters[standardId] = { level: null };
+    } else {
+      delete updatedFilters[standardId];
+    }
+    
+    setFilters({
+      ...filters,
+      complianceFilters: updatedFilters
+    });
+  };
+  
+  const handleComplianceLevelChange = (standardId, level) => {
+    const updatedFilters = { ...filters.complianceFilters };
+    
+    if (updatedFilters[standardId]) {
+      updatedFilters[standardId] = { 
+        ...updatedFilters[standardId], 
+        level 
+      };
+    }
+    
+    setFilters({
+      ...filters,
+      complianceFilters: updatedFilters
     });
   };
   
@@ -114,6 +152,26 @@ const ExplorePage = () => {
           </div>
         </div>
         
+        {/* Security Level Banner */}
+        <div className="mb-8 p-4 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 rounded-lg border border-blue-200 dark:border-blue-800 transition-colors duration-200">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-lg font-medium text-blue-800 dark:text-blue-300 transition-colors duration-200">Enterprise-Grade Security</h2>
+              <p className="mt-1 text-sm text-blue-600 dark:text-blue-400 transition-colors duration-200">
+                All spaces on ShareYourSpace are verified to ensure they meet German business data protection and security standards.
+              </p>
+            </div>
+            <div className="mt-4 md:mt-0">
+              <a 
+                href="/compliance-framework" 
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-600 transition-colors duration-200"
+              >
+                Learn More
+              </a>
+            </div>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters */}
           <div className="lg:col-span-1">
@@ -139,6 +197,14 @@ const ExplorePage = () => {
                   ))}
                 </select>
               </div>
+              
+              {/* Enhanced Compliance Filters - Now at the top of the filters */}
+              <ComplianceFilter 
+                selectedStandards={filters.complianceFilters}
+                onStandardChange={handleComplianceStandardChange}
+                onLevelChange={handleComplianceLevelChange}
+                expanded={expandedComplianceFilters}
+              />
               
               {/* Price Range Filter */}
               <div className="mb-6">
@@ -172,7 +238,7 @@ const ExplorePage = () => {
               </div>
               
               {/* Amenities Filter */}
-              <div className="mb-6">
+              <div>
                 <p className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-2 transition-colors duration-200">
                   Amenities
                 </p>
@@ -194,71 +260,14 @@ const ExplorePage = () => {
                 </div>
               </div>
               
-              {/* Compliance Features Filter */}
-              <div className="mb-6">
-                <p className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-2 transition-colors duration-200">
-                  Compliance Features
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <input
-                      id="compliance-dataProtection"
-                      type="checkbox"
-                      className="h-4 w-4 text-primary-600 dark:text-dark-primary-600 focus:ring-primary-500 dark:focus:ring-dark-primary-500 border-gray-300 dark:border-dark-bg rounded transition-colors duration-200"
-                      checked={filters.complianceFeatures.includes('dataProtection')}
-                      onChange={() => handleComplianceChange('dataProtection')}
-                    />
-                    <label htmlFor="compliance-dataProtection" className="ml-2 text-sm text-gray-700 dark:text-dark-text-secondary transition-colors duration-200">
-                      Data Protection
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="compliance-nda"
-                      type="checkbox"
-                      className="h-4 w-4 text-primary-600 dark:text-dark-primary-600 focus:ring-primary-500 dark:focus:ring-dark-primary-500 border-gray-300 dark:border-dark-bg rounded transition-colors duration-200"
-                      checked={filters.complianceFeatures.includes('nda')}
-                      onChange={() => handleComplianceChange('nda')}
-                    />
-                    <label htmlFor="compliance-nda" className="ml-2 text-sm text-gray-700 dark:text-dark-text-secondary transition-colors duration-200">
-                      NDA Support
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="compliance-ipProtection"
-                      type="checkbox"
-                      className="h-4 w-4 text-primary-600 dark:text-dark-primary-600 focus:ring-primary-500 dark:focus:ring-dark-primary-500 border-gray-300 dark:border-dark-bg rounded transition-colors duration-200"
-                      checked={filters.complianceFeatures.includes('ipProtection')}
-                      onChange={() => handleComplianceChange('ipProtection')}
-                    />
-                    <label htmlFor="compliance-ipProtection" className="ml-2 text-sm text-gray-700 dark:text-dark-text-secondary transition-colors duration-200">
-                      IP Protection
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="compliance-iso27001"
-                      type="checkbox"
-                      className="h-4 w-4 text-primary-600 dark:text-dark-primary-600 focus:ring-primary-500 dark:focus:ring-dark-primary-500 border-gray-300 dark:border-dark-bg rounded transition-colors duration-200"
-                      checked={filters.complianceFeatures.includes('iso27001')}
-                      onChange={() => handleComplianceChange('iso27001')}
-                    />
-                    <label htmlFor="compliance-iso27001" className="ml-2 text-sm text-gray-700 dark:text-dark-text-secondary transition-colors duration-200">
-                      ISO 27001 Compliant
-                    </label>
-                  </div>
-                </div>
-              </div>
-              
               {/* Reset Filters Button */}
               <button
-                className="w-full px-4 py-2 bg-gray-100 dark:bg-dark-bg text-gray-700 dark:text-dark-text-secondary rounded-md hover:bg-gray-200 dark:hover:bg-dark-bg-light transition-colors duration-200"
+                className="w-full mt-6 px-4 py-2 bg-gray-100 dark:bg-dark-bg text-gray-700 dark:text-dark-text-secondary rounded-md hover:bg-gray-200 dark:hover:bg-dark-bg-light transition-colors duration-200"
                 onClick={() => setFilters({
                   location: '',
                   amenities: [],
                   priceRange: [0, 100],
-                  complianceFeatures: []
+                  complianceFilters: {}
                 })}
               >
                 Reset Filters
@@ -269,7 +278,14 @@ const ExplorePage = () => {
           {/* Space Grid */}
           <div className="lg:col-span-3">
             <div className="mb-4 flex justify-between items-center">
-              <p className="text-gray-600 dark:text-dark-text-secondary transition-colors duration-200">Showing {filteredSpaces.length} spaces</p>
+              <p className="text-gray-600 dark:text-dark-text-secondary transition-colors duration-200">
+                Showing {sortedSpaces.length} spaces 
+                {Object.keys(filters.complianceFilters).length > 0 && (
+                  <span>
+                    {" "}with compliance requirements
+                  </span>
+                )}
+              </p>
               <div className="flex items-center">
                 <label htmlFor="sort" className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mr-2 transition-colors duration-200">
                   Sort by:
@@ -278,6 +294,7 @@ const ExplorePage = () => {
                   id="sort"
                   className="px-3 py-2 border border-gray-300 dark:border-dark-bg rounded-md shadow-sm focus:ring-primary-500 dark:focus:ring-dark-primary-500 focus:border-primary-500 dark:focus:border-dark-primary-500 dark:bg-dark-bg dark:text-dark-text-primary transition-colors duration-200"
                 >
+                  <option>Security Level</option>
                   <option>Price: Low to High</option>
                   <option>Price: High to Low</option>
                   <option>Most Popular</option>
@@ -285,10 +302,10 @@ const ExplorePage = () => {
               </div>
             </div>
             
-            {filteredSpaces.length > 0 ? (
+            {sortedSpaces.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                {filteredSpaces.map(space => (
-                  <SpaceCard key={space.id} space={space} />
+                {sortedSpaces.map(space => (
+                  <SpaceCard key={space.id} space={space} showComplianceScore={true} />
                 ))}
               </div>
             ) : (
