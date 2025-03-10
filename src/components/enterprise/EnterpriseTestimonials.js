@@ -9,23 +9,23 @@ const EnterpriseTestimonials = () => {
       author: "Maria Schneider",
       title: "Chief Innovation Officer",
       company: "BMW Group",
-      image: "/api/placeholder/100/100"
+      image: "https://randomuser.me/api/portraits/women/23.jpg"
     },
     {
       quote: "The pilot program exceeded our expectations. Not only did we validate the space sharing capabilities, but the InnovationMatch feature connected us with several startups that are now strategic partners.",
       author: "Thomas Weber",
       title: "Head of Digital Transformation",
       company: "Allianz SE",
-      image: "/api/placeholder/100/100"
+      image: "https://randomuser.me/api/portraits/men/45.jpg"
     },
     {
       quote: "Implementing ShareYourSpace through the enterprise pilot gave us the confidence to roll out the platform company-wide. The dedicated support team ensured a seamless transition from pilot to full deployment.",
       author: "Sarah Müller",
       title: "VP of Corporate Development",
       company: "Siemens AG",
-      image: "/api/placeholder/100/100"
+      image: "https://randomuser.me/api/portraits/women/32.jpg"
     }
-  ];
+  ]
   
   const nextTestimonial = () => {
     setActiveTestimonial((prev) => (prev + 1) % testimonials.length);

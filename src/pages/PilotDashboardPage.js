@@ -186,8 +186,12 @@ const PilotDashboardPage = () => {
                 </h2>
                 <div className="mb-6">
                   <div className="flex items-center mb-4">
-                    <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-dark-primary-900 flex items-center justify-center">
-                      <span className="text-primary-600 dark:text-dark-primary-400 font-medium">AW</span>
+                    <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-dark-primary-900 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="https://randomuser.me/api/portraits/women/56.jpg" 
+                        alt="Anna Weber" 
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-gray-900 dark:text-dark-text-primary">{pilotData.accountManager.name}</p>

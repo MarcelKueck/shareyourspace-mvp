@@ -46,7 +46,7 @@ const EnterprisePilotPage = () => {
               <div className="relative mx-auto w-full rounded-lg shadow-lg overflow-hidden lg:max-w-lg">
                 <img
                   className="w-full"
-                  src="/api/placeholder/600/400"
+                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
                   alt="Enterprise workspace collaboration"
                 />
               </div>
