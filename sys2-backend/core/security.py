@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
-from ..config import settings
+from config import settings
 from fastapi import Depends, HTTPException, status
 
 # Constants for JWT

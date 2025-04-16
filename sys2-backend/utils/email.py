@@ -1,7 +1,7 @@
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To, Content
 import os
-from ..config import settings # Assuming config.py is one level up
+from config import settings # Assuming config.py is one level up
 
 def send_email(to_email: str, subject: str, html_content: str):
     """Sends an email using SendGrid."""

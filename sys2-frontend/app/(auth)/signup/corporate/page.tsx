@@ -3,6 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useRouter } from 'next/navigation'; // Import the router
+import { toast } from "sonner"; // Import toast if needed for direct feedback
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,10 +38,9 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-// Placeholder API function removed
-// async function registerUser(data: FormData) { ... }
-
 export default function CorporateSignupPage() {
+  const router = useRouter(); // Instantiate the router
+
   // 1. Define your form.
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -54,20 +55,20 @@ export default function CorporateSignupPage() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: FormData) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     try {
       // Call the imported registerUser function
       const createdUser = await registerUser(values);
-      // Handle successful registration (e.g., redirect, show message)
-      // Toasts are handled within registerUser
       console.log("Registration successful, user:", createdUser);
-      form.reset(); // Reset form after successful submission
+      // Show success toast (optional, might be handled in API function)
+      // toast.success("Registration successful! Please check your email.");
+
+      // REDIRECT on success
+      router.push('/auth/verify-email');
+
     } catch (error) {
-      // Handle errors (e.g., display error message)
-      // Toasts are handled within registerUser
+      // Error handling is likely done via toasts within registerUser
       console.error("Registration failed in component:", error);
-      // You might want to set a form error using form.setError based on the error
+      // Optionally set form-specific errors if needed
     }
   }
 
@@ -77,7 +78,7 @@ export default function CorporateSignupPage() {
         <CardHeader>
           <CardTitle>Register your Company</CardTitle>
           <CardDescription>
-            Create a corporate account to manage your company&apos;s spaces.
+            Create a corporate account to manage your company's spaces.
           </CardDescription>
         </CardHeader>
         <CardContent>

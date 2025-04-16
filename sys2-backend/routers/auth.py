@@ -9,10 +9,9 @@ from models import user as models
 from schemas import user as schemas
 from schemas import auth as auth_schemas
 from core.security import get_password_hash, create_verification_token, verify_verification_token, verify_password, create_access_token, create_refresh_token, create_password_reset_token, verify_token, ACCESS_TOKEN_EXPIRE_MINUTES
-from core.email import send_email
+from utils.email import send_email
 
 router = APIRouter(
-    prefix="/auth",
     tags=["auth"],
     responses={404: {"description": "Not found"}},
 )
